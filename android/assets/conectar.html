@@ -1,0 +1,28 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{box-sizing:border-box}body{margin:0;font:16px/1.45 system-ui,Roboto,sans-serif;background:#16538f;color:#1d1b22;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#fff;border-radius:16px;padding:24px 20px;width:100%;max-width:420px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:6px}.top img{width:52px;height:52px;border-radius:12px}h1{font-size:21px;margin:0}
+p{color:#6c6876;font-size:14px;margin:10px 0}label{display:block;font-size:13px;color:#6c6876;margin:14px 0 4px}
+input{width:100%;font:inherit;padding:12px;border:1px solid #dedbe5;border-radius:10px}input:focus{outline:2px solid #16538f;border-color:transparent}
+button{width:100%;margin-top:14px;font:inherit;font-weight:600;padding:13px;border:0;border-radius:10px;background:#16538f;color:#fff}button:disabled{opacity:.6}
+#msg{min-height:20px;font-size:14px;margin-top:10px}.err{color:#b42318}
+ol{padding-left:18px;color:#6c6876;font-size:13px;margin:6px 0 0}
+</style></head><body>
+<form class="card" id="f">
+<div class="top"><img src="logo.png" alt=""><h1>Conectar ao Ragquest</h1></div>
+<p>Informe o endereço do servidor Ragquest da sua empresa. Depois é só entrar com seu login e senha.</p>
+<label for="e">Endereço do servidor</label>
+<input id="e" inputmode="url" autocapitalize="off" autocomplete="off" spellcheck="false" placeholder="ex.: 192.168.0.10:8765">
+<button id="b">Conectar</button>
+<div id="msg"></div>
+<p style="margin-top:16px"><b>Não sabe o endereço?</b></p>
+<ol><li>Peça ao administrador o QR code de acesso.</li><li>Leia com a câmera do celular: a página do Ragquest abre no navegador.</li><li>Toque em <b>"Abrir no app"</b>: o app se conecta sozinho.</li></ol>
+</form>
+<script>
+const e=document.getElementById("e"),b=document.getElementById("b"),m=document.getElementById("msg");
+function erro(t){m.className="err";m.textContent=t;b.disabled=false;b.textContent="Conectar"}
+document.getElementById("f").onsubmit=ev=>{ev.preventDefault();if(!e.value.trim()){erro("Digite o endereço.");return}
+ m.className="";m.textContent="Conectando...";b.disabled=true;b.textContent="Conectando...";window.RagquestApp.conectar(e.value)};
+if(location.hash.length>1){e.value=decodeURIComponent(location.hash.slice(1));m.textContent="Conectando...";b.disabled=true}
+</script></body></html>

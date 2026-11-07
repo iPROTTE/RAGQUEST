@@ -1,0 +1,14 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{box-sizing:border-box}body{margin:0;font:16px/1.45 system-ui,Roboto,sans-serif;background:#16538f;color:#1d1b22;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:#fff;border-radius:16px;padding:24px 20px;width:100%;max-width:420px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.top{display:flex;align-items:center;gap:12px}.top img{width:52px;height:52px;border-radius:12px}h1{font-size:20px;margin:0}
+p{color:#6c6876;font-size:14px}code{color:#1d1b22;word-break:break-all}
+button{width:100%;margin-top:10px;font:inherit;font-weight:600;padding:13px;border-radius:10px;border:0;background:#16538f;color:#fff}.sec{background:#fff;color:#16538f;border:1px solid #dedbe5}
+</style></head><body><div class="card">
+<div class="top"><img src="logo.png" alt=""><h1>Sem conexão com o servidor</h1></div>
+<p>Não foi possível abrir <code id="s"></code></p>
+<p>Verifique se o celular está no <b>Wi-Fi da empresa</b> (ou no Tailscale) e se o servidor do Ragquest está ligado.</p>
+<button onclick="RagquestApp.tentar()">Tentar de novo</button>
+<button class="sec" onclick="RagquestApp.trocarServidor()">Trocar servidor</button>
+</div><script>document.getElementById("s").textContent=RagquestApp.servidor()</script></body></html>

@@ -1,0 +1,28 @@
+plugins { id 'com.android.application' version '8.5.2' }
+
+android {
+    namespace 'com.ragquest.app'
+    compileSdk 34
+    defaultConfig {
+        applicationId "com.ragquest.app"
+        minSdk 24
+        targetSdk 34
+        versionCode((System.getenv("VERSAO_CODIGO") ?: "1").toInteger())
+        versionName System.getenv("VERSAO_NOME") ?: "1.0"
+    }
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['java']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+        }
+    }
+    buildTypes {
+        release { minifyEnabled false }   // assinado depois, fora do GitHub (a chave fica só com o Protti)
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
