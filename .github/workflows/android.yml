@@ -7,10 +7,12 @@ on:
   workflow_dispatch:
 
 # Compila o APK SEM assinatura. A assinatura e feita depois pelo Protti
-# (a chave nunca vai para o GitHub).
+# (a chave nunca vai para o GitHub). O APK sem assinatura fica no ramo "apk".
 jobs:
   apk:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -26,8 +28,15 @@ jobs:
           VERSAO_CODIGO: ${{ github.run_number }}
           VERSAO_NOME: 1.0.${{ github.run_number }}
         run: gradle assembleRelease --no-daemon --stacktrace
-      - run: cp android/build/outputs/apk/release/*.apk ragquest-sem-assinatura.apk
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ragquest-apk
-          path: ragquest-sem-assinatura.apk
+      - run: cp android/build/outputs/apk/release/*.apk "$RUNNER_TEMP/ragquest-sem-assinatura.apk"
+      - name: Publicar no ramo apk
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git checkout --orphan apk
+          git rm -rf --quiet .
+          cp "$RUNNER_TEMP/ragquest-sem-assinatura.apk" .
+          echo "${{ github.run_number }}" > versao.txt
+          git add ragquest-sem-assinatura.apk versao.txt
+          git commit -m "APK ${{ github.run_number }} (sem assinatura)"
+          git push -f origin apk
