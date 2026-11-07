@@ -26,7 +26,7 @@ jobs:
           VERSAO_CODIGO: ${{ github.run_number }}
           VERSAO_NOME: 1.0.${{ github.run_number }}
         run: gradle assembleRelease --no-daemon --stacktrace
-      - run: cp android/build/outputs/apk/release/app-release-unsigned.apk ragquest-sem-assinatura.apk
+      - run: cp android/build/outputs/apk/release/*.apk ragquest-sem-assinatura.apk
       - uses: actions/upload-artifact@v4
         with:
           name: ragquest-apk
