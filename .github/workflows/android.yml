@@ -1,0 +1,33 @@
+name: App Android
+
+on:
+  push:
+    branches: [main]
+    paths: ['android/**']
+  workflow_dispatch:
+
+# Compila o APK SEM assinatura. A assinatura e feita depois pelo Protti
+# (a chave nunca vai para o GitHub).
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Compilar APK
+        working-directory: android
+        env:
+          VERSAO_CODIGO: ${{ github.run_number }}
+          VERSAO_NOME: 1.0.${{ github.run_number }}
+        run: gradle assembleRelease --no-daemon --stacktrace
+      - run: cp android/build/outputs/apk/release/app-release-unsigned.apk ragquest-sem-assinatura.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ragquest-apk
+          path: ragquest-sem-assinatura.apk
