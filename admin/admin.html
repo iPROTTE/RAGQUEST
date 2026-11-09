@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ragquest Admin</title><link rel="icon" href="/favicon.ico">
+<style>
+:root{--bg:#f5f4f7;--card:#fff;--tx:#1d1b22;--mut:#6c6876;--pri:#5b2a86;--pri2:#7c3aed;--bd:#dedbe5;--soft:#ecebf1;--ok:#1f7a4d;--err:#b42318}
+@media(prefers-color-scheme:dark){:root{--bg:#141218;--card:#1e1b24;--tx:#ece9f2;--mut:#a29bb0;--pri:#b48cf0;--pri2:#c4a3ff;--bd:#33303c;--soft:#29252f;--ok:#4cc38a;--err:#ff8a80}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 "Segoe UI",system-ui,sans-serif}
+header{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--card);border-bottom:1px solid var(--bd)}
+.logo{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;display:grid;place-items:center;font-weight:800}
+.brand{flex:1}.brand b{font-size:17px}.brand small{display:block;color:var(--mut);font-size:12px;line-height:1}
+nav button{background:none;border:0;color:var(--mut);padding:6px 10px;cursor:pointer;font:inherit;border-radius:6px}
+nav button.on{color:var(--pri);font-weight:600;background:var(--soft)}
+main{max-width:920px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:14px}
+.card h2{font-size:15px;margin:0 0 12px}
+label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
+input,textarea,button{font:inherit;padding:9px 12px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx)}
+input,textarea{width:100%}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}@media(max-width:640px){.grid{grid-template-columns:1fr}}
+button{cursor:pointer}.pri{background:var(--pri);color:var(--card);border-color:var(--pri);font-weight:600}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.mut{color:var(--mut);font-size:13px}.mono{font-family:Consolas,monospace;word-break:break-all}
+.key{font:13px Consolas,monospace;word-break:break-all;background:var(--soft);padding:10px;border-radius:8px;margin:8px 0}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--bd);vertical-align:top}
+.log{font:12px Consolas,monospace;background:var(--soft);padding:10px;border-radius:8px;white-space:pre-wrap;max-height:300px;overflow:auto}
+.hide{display:none}.err{color:var(--err)}.ok{color:var(--ok)}
+.warn{border-left:4px solid #d97706;padding-left:10px}
+</style></head><body>
+<header><div class="logo">R</div><div class="brand"><b>Ragquest Admin</b><small>Licenças e instalador — uso exclusivo do fornecedor</small></div>
+<nav><button data-t="lic" class="on">Licenças</button><button data-t="inst">Instalador</button><button data-t="cha">Chave mestra</button></nav></header>
+<main>
+<div id="bkwarn" class="card warn hide" style="cursor:pointer"><b>⚠️ Você ainda não fez backup da chave mestra.</b> Se perder este computador, não conseguirá emitir licenças. Clique aqui para fazer agora.</div>
+<section id="lic">
+ <div class="card"><h2>Gerar licença</h2>
+  <div class="grid">
+   <div><label>Cliente *</label><input id="cli" placeholder="Nome da empresa"></div>
+   <div><label>Código da máquina (mostrado na tela de ativação do cliente)</label><input id="maq" placeholder="XXXX-XXXX-XXXX" style="text-transform:uppercase"></div>
+   <div><label>Validade</label><input id="val" type="date"></div>
+   <div><label>Observação</label><input id="obs" placeholder="Ex.: plano mensal, contrato 123"></div>
+   <div><label>Limite de usuários ativos (vazio = sem limite)</label><input id="usu" type="number" min="1" placeholder="Ex.: 10"></div>
+   <div><label>Limite de agentes (vazio = sem limite)</label><input id="agt" type="number" min="1" placeholder="Ex.: 3"></div>
+  </div>
+  <div class="row" style="margin-top:8px"><label style="margin:0"><input type="checkbox" id="qq" style="width:auto"> Qualquer computador (não vincular à máquina)</label>
+   <label style="margin:0"><input type="checkbox" id="sv" style="width:auto"> Sem validade</label></div>
+  <div class="row" style="margin-top:12px"><button class="pri" id="gerar">Gerar licença</button><span id="lerr" class="err"></span></div>
+  <div id="res" class="hide"><div class="key" id="chave"></div><button id="cp">Copiar chave</button> <span class="mut">Envie esta chave ao cliente. Ela também ficou salva no histórico.</span></div>
+ </div>
+ <div class="card"><h2>Licenças emitidas</h2><table><thead><tr><th>Emitida</th><th>Cliente</th><th>Máquina</th><th>Validade</th><th>Usuários</th><th>Agentes</th><th>Obs.</th><th></th></tr></thead><tbody id="hist"></tbody></table></div>
+</section>
+<section id="inst" class="hide">
+ <div class="card"><h2>Gerar instalador para clientes</h2>
+  <p class="mut" style="margin-top:0">Cria um único <b>.exe</b> com tudo incluído (Python, Ragquest e sua chave pública). No cliente, ele instala o motor de IA, baixa os modelos, cria os atalhos e abre a tela de ativação.</p>
+  <div class="row"><label style="margin:0">Versão</label><input id="ver" style="width:120px" value="1.0.0"><button class="pri" id="bi">Gerar instalador</button><button id="ab">Abrir pasta dos instaladores</button></div>
+  <div class="log hide" id="blog" style="margin-top:12px"></div>
+ </div>
+ <div class="card"><h2>Instaladores gerados</h2><div id="insts" class="mut">Nenhum ainda.</div></div>
+</section>
+<section id="cha" class="hide">
+ <div class="card warn"><h2>🔐 Backup da chave mestra</h2>
+  <p style="margin-top:0">A chave mestra assina todas as licenças. Gere um <b>backup protegido por senha</b> e guarde o arquivo em <b>dois lugares</b> (ex.: Google Drive/OneDrive <b>e</b> um pendrive). Guarde a senha num gerenciador de senhas — sem ela o backup não abre.</p>
+  <p class="mut" id="ultbk"></p>
+  <div class="grid"><div><label>Senha do backup (mín. 10 caracteres)</label><input type="password" id="bs1" autocomplete="new-password"></div>
+  <div><label>Confirmar senha</label><input type="password" id="bs2" autocomplete="new-password"></div></div>
+  <div class="row" style="margin-top:12px"><button class="pri" id="bkb">Baixar backup</button><span id="bkm" class="mut"></span></div></div>
+ <div class="card"><h2>♻️ Restaurar de um backup</h2>
+  <p class="mut" style="margin-top:0">Use em um computador novo ou se a pasta do Admin for perdida. A chave atual (se houver) é guardada antes de ser substituída.</p>
+  <div class="grid"><div><label>Arquivo .rqbak</label><input type="file" id="rf" accept=".rqbak"></div>
+  <div><label>Senha do backup</label><input type="password" id="rs"></div></div>
+  <div class="row" style="margin-top:12px"><button id="rb">Restaurar</button><span id="rm" class="mut"></span></div></div>
+ <div class="card"><h2>Chave mestra (privada)</h2>
+  <p>Arquivo: <span class="mono" id="pch"></span></p><button id="ac">Abrir pasta da chave</button>
+  <p class="mut">Nunca envie este arquivo a ninguém. Impressão digital da chave pública (vai em cada instalador): <span class="mono" id="imp"></span></p></div>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x==b));
+ ["lic","inst","cha"].forEach(t=>$(t).classList.toggle("hide",t!=b.dataset.t))});
+async function j(u,o){const r=await fetch(u,o);const d=await r.json();if(!r.ok)throw new Error(d.detail||r.statusText);return d}
+const post=(u,b)=>j(u,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b||{})});
+const d0=new Date();d0.setFullYear(d0.getFullYear()+1);$("val").value=d0.toISOString().slice(0,10);
+$("qq").onchange=()=>{$("maq").disabled=$("qq").checked};$("sv").onchange=()=>{$("val").disabled=$("sv").checked};
+$("gerar").onclick=async()=>{$("lerr").textContent="";
+ try{const r=await post("/api/licenca",{cliente:$("cli").value,maquina:$("qq").checked?"*":$("maq").value,validade:$("sv").checked?"":$("val").value,obs:$("obs").value,usuarios:$("usu").value?+$("usu").value:null,agentes:$("agt").value?+$("agt").value:null});
+  $("chave").textContent=r.chave;$("res").classList.remove("hide");$("cp").textContent="Copiar chave";hist()}catch(e){$("lerr").textContent=e.message}};
+async function copiar(t,btn){try{await navigator.clipboard.writeText(t);btn.textContent="Copiado ✓"}catch{btn.textContent="Selecione e copie"}}
+$("cp").onclick=()=>copiar($("chave").textContent,$("cp"));
+async function hist(){const l=await j("/api/licencas");const b=$("hist");b.innerHTML="";
+ l.forEach(x=>{const tr=b.insertRow();[x.emitida_em,x.cliente,x.maquina=="*"?"qualquer":x.maquina,x.validade,x.usuarios||"sem limite",x.agentes||"sem limite",x.observacao].forEach(v=>tr.insertCell().textContent=v||"");
+  const bt=document.createElement("button");bt.textContent="Copiar";bt.onclick=()=>copiar(x.chave,bt);tr.insertCell().appendChild(bt)});
+ if(!l.length){const tr=b.insertRow();const c=tr.insertCell();c.colSpan=6;c.className="mut";c.textContent="Nenhuma licença emitida."}}
+async function status(){const s=await j("/api/status");
+ $("ultbk").textContent=s.ultimo_backup?"Último backup: "+s.ultimo_backup:"Nenhum backup feito ainda.";$("bkwarn").classList.toggle("hide",!!s.ultimo_backup);$("pch").textContent=s.pasta_chaves;$("imp").textContent=s.impressao;$("ver").value=s.versao;
+ $("insts").innerHTML="";if(s.instaladores.length){s.instaladores.forEach(f=>{const p=document.createElement("div");p.className="mono";p.textContent=s.pasta_saida+"\\"+f;$("insts").appendChild(p)})}else $("insts").textContent="Nenhum ainda."}
+$("bi").onclick=async()=>{try{await post("/api/instalador",{versao:$("ver").value});$("blog").classList.remove("hide");poll()}catch(e){$("blog").classList.remove("hide");$("blog").textContent=e.message}};
+async function poll(){const b=await j("/api/instalador");$("blog").textContent=b.log.join("\n");$("blog").scrollTop=1e9;$("bi").disabled=b.rodando;
+ if(b.rodando)setTimeout(poll,1500);else status()}
+$("bkwarn").onclick=()=>document.querySelector('nav button[data-t="cha"]').click();
+$("bkb").onclick=async()=>{$("bkm").textContent="";if($("bs1").value!==$("bs2").value){$("bkm").textContent="As senhas não conferem.";return}
+ const r=await fetch("/api/backup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({senha:$("bs1").value})});
+ if(!r.ok){$("bkm").textContent=(await r.json()).detail;return}
+ const blob=await r.blob();const nome=(r.headers.get("Content-Disposition")||"").split('filename="')[1]?.replace('"',"")||"ragquest-chave-mestra.rqbak";
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=nome;document.body.appendChild(a);a.click();a.remove();
+ $("bkm").textContent="✓ Backup baixado ("+nome+"). Copie para a nuvem e para um pendrive.";$("bs1").value=$("bs2").value="";status()};
+$("rb").onclick=async()=>{$("rm").textContent="";const f=$("rf").files[0];if(!f){$("rm").textContent="Escolha o arquivo .rqbak";return}
+ try{const r=await post("/api/restaurar",{conteudo:await f.text(),senha:$("rs").value});$("rm").textContent="✓ Chave restaurada (backup de "+r.criado_em+"). Impressão: "+r.impressao;hist();status()}catch(e){$("rm").textContent=e.message}};
+$("ab").onclick=()=>post("/api/abrir/saida");$("ac").onclick=()=>post("/api/abrir/chaves");
+hist();status();
+</script></body></html>
