@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ragquest</title>
+<link rel="icon" href="/favicon.ico"><link rel="icon" type="image/png" sizes="192x192" href="/icones/icone-192.png">
+<link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#16538f">
+<link rel="apple-touch-icon" href="/icones/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ragquest"><meta name="apple-mobile-web-app-status-bar-style" content="default">
+<style>
+:root{--bg:#f5f4f7;--card:#fff;--tx:#1d1b22;--mut:#6c6876;--pri:#16538f;--pri2:#2e9e6a;--bd:#dedbe5;--me:#16538f;--bot:#ecebf1;--ok:#1f7a4d;--err:#b42318}
+@media(prefers-color-scheme:dark){:root{--bg:#141218;--card:#1e1b24;--tx:#ece9f2;--mut:#a29bb0;--pri:#7fb2ea;--pri2:#5fd39b;--bd:#33303c;--me:#1d5c9e;--bot:#29252f;--ok:#4cc38a;--err:#ff8a80}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 "Segoe UI",system-ui,sans-serif;display:flex;flex-direction:column;height:100dvh}
+header{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--bd)}
+.logo{width:36px;height:36px;border-radius:9px;flex:none;display:block}
+.brand{flex:1;line-height:1.15}.brand b{font-size:17px}.brand small{display:block;color:var(--mut);font-size:12px}
+nav button{background:none;border:0;color:var(--mut);padding:6px 10px;cursor:pointer;font:inherit;border-radius:6px}
+nav button.on{color:var(--pri);font-weight:600;background:var(--bot)}
+main{flex:1;overflow:auto;padding:16px;width:100%;max-width:880px;margin:0 auto}
+.msg{max-width:85%;padding:10px 14px;border-radius:14px;margin:8px 0;white-space:pre-wrap;word-wrap:break-word}
+.me{background:var(--me);color:#fff;margin-left:auto}.bot{background:var(--bot)}
+.src{font-size:12px;color:var(--mut);margin-top:8px;white-space:normal}.src a{color:var(--pri)}
+.badge{font-size:12px;color:var(--mut);margin-bottom:6px}
+form.ask{display:flex;gap:8px;padding:12px 16px;background:var(--card);border-top:1px solid var(--bd);max-width:880px;width:100%;margin:0 auto}
+input,select,textarea,button.pri,button.sec{font:inherit;padding:9px 12px;border:1px solid var(--bd);border-radius:8px;background:var(--card);color:var(--tx)}
+form.ask input{flex:1;min-width:0}
+button.pri{background:var(--pri);color:var(--card);border-color:var(--pri);cursor:pointer;font-weight:600}
+button.sec{cursor:pointer}button:disabled{opacity:.5}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:16px;margin-bottom:14px}
+.card h2{font-size:15px;margin:0 0 10px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:6px;border-bottom:1px solid var(--bd)}
+.mut{color:var(--mut);font-size:13px}.mono{font-family:Consolas,monospace;word-break:break-all}
+footer{font-size:11px;color:var(--mut);text-align:center;padding:4px}
+.ov{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:9;padding:16px}
+.ov .card{width:100%;max-width:460px}
+.code{font:600 22px Consolas,monospace;letter-spacing:2px;text-align:center;padding:10px;border:1px dashed var(--pri);border-radius:8px;margin:8px 0}
+.sug{margin-top:10px;padding:10px;border:1px dashed var(--pri);border-radius:10px;background:var(--card);white-space:normal;font-size:13px}
+.sug label{display:flex;gap:6px;align-items:flex-start;margin:4px 0;cursor:pointer}.sug .row{margin-top:8px}
+.hide,.ov.hide,form.ask.hide{display:none}
+.ov label,.lab{display:block;margin:10px 0 4px;font-size:13px;color:var(--mut)}
+.who{font-size:12px;color:var(--mut);text-align:right;line-height:1.2}.who b{color:var(--tx)}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:9px;background:var(--bot);color:var(--mut)}.tag.adm{background:var(--pri);color:var(--card)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}@media(max-width:600px){.grid2{grid-template-columns:1fr}nav button{padding:6px 8px;font-size:14px;white-space:nowrap}.brand small,.who{display:none}header{flex-wrap:wrap;row-gap:6px}nav{order:3;width:100%;display:flex;overflow-x:auto;margin:0!important}}
+.tw{overflow-x:auto}
+.cbar{display:flex;gap:8px;align-items:center;max-width:880px;width:100%;margin:0 auto;padding:10px 16px 0}
+.cbar span{flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+.gav{position:fixed;top:0;left:0;bottom:0;width:310px;max-width:86vw;background:var(--card);border-right:1px solid var(--bd);z-index:60;padding:14px;overflow:auto;box-shadow:4px 0 24px rgba(0,0,0,.18)}
+.fundo{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:59}
+.ci{display:flex;align-items:center;gap:6px;padding:9px 8px;border-radius:8px;cursor:pointer;margin:2px 0}.ci:hover,.ci.on{background:var(--bot)}
+.ci .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.ci small{color:var(--mut);font-size:11px;flex:none}
+.ci button{padding:2px 7px;font-size:12px;flex:none}.gsec{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin:12px 8px 2px}
+.msg.status{color:var(--mut);font-style:italic}.msg.bot.vivo::after{content:"▍";animation:pisca 1s steps(2) infinite;color:var(--pri)}
+@keyframes pisca{50%{opacity:0}}
+.cbar.hide{display:none}
+@media(max-width:600px){#tipo{display:none}.cbar{padding:8px 12px 0}}
+code{font-family:Consolas,monospace;font-size:.92em;background:var(--bot);padding:1px 5px;border-radius:5px}.msg.bot code{background:rgba(127,127,127,.15)}
+pre.cod{white-space:pre-wrap;font-family:Consolas,monospace;font-size:13px;background:rgba(127,127,127,.13);padding:8px 10px;border-radius:8px;margin:6px 0}
+sup.cit{font-size:.72em;color:var(--pri);font-weight:600}
+.agbtn{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;background:none;border:0;cursor:pointer;color:var(--tx);padding:2px 6px;border-radius:10px}
+.agbtn:hover{background:var(--bot)}.agbtn b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.agbtn small{color:var(--mut);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.agmenu{position:fixed;z-index:61;background:var(--card);border:1px solid var(--bd);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.2);padding:6px;width:340px;max-width:92vw;left:50%;transform:translateX(-50%);top:120px}
+.agit{display:flex;gap:10px;align-items:center;padding:9px 10px;border-radius:9px;cursor:pointer}.agit:hover,.agit.on{background:var(--bot)}
+.agit .ic{font-size:22px;width:30px;text-align:center}.agit div{min-width:0}.agit small{display:block;color:var(--mut);font-size:12px}
+.agcard{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--bd)}.agcard:first-of-type{border-top:0}
+.agcard .ic{font-size:28px;width:40px;text-align:center}.agcard .info{flex:1;min-width:0}.agcard .mono{font-size:12px;color:var(--mut);word-break:break-all}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.chip{font-size:12px;padding:2px 8px;border-radius:10px;background:var(--bot);color:var(--mut)}
+.emo button{font-size:18px;padding:2px 6px;margin:2px}.cks{display:flex;flex-wrap:wrap;gap:4px 14px;margin:6px 0}.cks label{display:flex;gap:6px;align-items:center;cursor:pointer;font-size:14px}
+pre.skill{white-space:pre-wrap;background:var(--bot);padding:10px;border-radius:8px;font-size:13px;margin:6px 0 0}
+.appbox{margin-top:14px;padding:12px;border-radius:10px;background:var(--bot)}a.btnl{display:inline-block;text-decoration:none;padding:9px 14px;border-radius:8px;font-weight:600;font-size:14px}a.btnl.pri{background:var(--pri);color:#fff}a.btnl.sec{border:1px solid var(--bd);color:var(--pri);background:var(--card)}
+.end{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:10px 0;border-top:1px solid var(--bd)}.end:first-of-type{border-top:0}
+.end code{font-size:15px;font-weight:600;user-select:all}.qr{width:150px;height:150px;flex:none;background:#fff;border-radius:8px;padding:4px}.qr svg{width:100%;height:100%}
+.aviso{background:#fff4e5;color:#7a4b00;border-radius:8px;padding:8px 10px;margin:8px 0}@media(prefers-color-scheme:dark){.aviso{background:#3a2a10;color:#ffd08a}}
+.err{color:var(--err)}.ok{color:var(--ok)}
+</style></head><body>
+<header><img class="logo" src="/icones/icone-192.png" alt=""><div class="brand"><b>Ragquest</b><small>Assistente de conhecimento</small></div>
+<nav><button id="t-chat" class="on">Chat</button><button id="t-docs" class="hide">Documentos</button><button id="t-agentes" class="hide">Agentes</button><button id="t-users" class="hide">Usuários</button><button id="t-perfil">Meu perfil</button></nav>
+<div class="who" id="who"></div></header>
+
+<div class="cbar" id="cbar"><button class="sec" id="c-lista" title="Conversas anteriores">☰ Conversas</button><button class="agbtn" id="c-ag" title="Trocar de agente"><b id="c-agnome">Ragquest</b><small id="c-titulo">Nova conversa</small></button><button class="sec" id="c-nova" title="Começar uma nova conversa">＋ Nova</button></div>
+<main id="chat"></main>
+<aside id="gav" class="gav hide"><div class="row" style="margin-bottom:10px"><b style="flex:1">Conversas</b><button class="sec" id="gav-x">✕</button></div>
+<button class="pri" id="gav-nova" style="width:100%">＋ Nova conversa</button><div id="gav-l"></div></aside><div id="gav-fundo" class="fundo hide"></div>
+<div id="agmenu" class="agmenu hide"></div><div id="agfundo" class="fundo hide" style="background:transparent"></div>
+<form class="ask" id="ask"><select id="tipo" title="Filtrar por tipo"><option value="">Todos</option><option>pop</option><option>manual</option><option>diretriz</option><option>outros</option></select>
+<input id="q" placeholder="Escreva uma mensagem..." autocomplete="off"><button class="pri" id="send">Enviar</button></form>
+
+<main id="docs" class="hide">
+<div class="card"><div class="row"><h2 style="flex:1;margin:0">📁 Pasta de conhecimento</h2><button class="sec" id="vb">Verificar agora</button></div>
+<p class="mut" style="margin:8px 0 0">Coloque os arquivos nesta pasta (subpastas <b>pop</b>, <b>manual</b>, <b>diretriz</b> ou <b>outros</b>). O Ragquest lê sozinho a cada 30 s; arquivos apagados saem da base.</p>
+<p class="mono" style="font-size:13px;margin:8px 0" id="pc"></p><p class="mut" id="ps"></p></div>
+<div class="card"><h2>Enviar arquivo (PDF, Word, Excel, TXT)</h2><div class="row">
+<input type="file" id="f" accept=".pdf,.docx,.xlsx,.xlsm,.txt,.md"><select id="ft"><option>pop</option><option>manual</option><option>diretriz</option><option>outros</option></select><select id="fa" title="Para qual agente"></select>
+<button class="pri" id="fb">Enviar</button></div></div>
+<div class="card"><h2>Indexar site (URL)</h2><div class="row">
+<input id="u" placeholder="https://..." style="flex:1;min-width:200px"><select id="ut"><option>manual</option><option>pop</option><option>diretriz</option><option>outros</option></select>
+<button class="pri" id="ub">Indexar</button></div></div>
+<div class="card"><div class="row"><h2 style="flex:1;margin:0">Documentos na base</h2><button class="sec" id="rc">Atualizar sites</button></div>
+<p class="mut" id="st"></p><table><thead><tr><th>Título</th><th>Agente</th><th>Tipo</th><th>Origem</th><th>Versão</th><th></th></tr></thead><tbody id="list"></tbody></table></div>
+<div class="card"><div class="row"><h2 style="flex:1;margin:0">🧩 Skills de conhecimento</h2><span class="mut" id="sk-st"></span></div>
+<p class="mut" style="margin:8px 0">Para cada documento, o Ragquest escreve uma ficha (assunto, quando usar, pontos-chave). É assim que ele sabe do que a base trata e acha respostas por sinônimos. As fichas são criadas sozinhas quando um documento entra ou muda.</p>
+<div class="tw"><table><thead><tr><th>Documento</th><th>Assunto</th><th>Skill</th><th></th></tr></thead><tbody id="sk-l"></tbody></table></div></div>
+</main>
+<main id="agentes" class="hide">
+<div class="card"><div class="row"><h2 style="flex:1;margin:0">🧭 Agentes</h2><span class="mut" id="ag-lim"></span></div>
+<p class="mut" style="margin:8px 0 0">Cada agente é um assistente de uma área do negócio, com conhecimento próprio: o que estiver na pasta dele só ele usa. Em <b>Usuários</b> você define quem acessa cada agente (administradores acessam todos).</p></div>
+<div class="card"><div class="row"><h2 style="flex:1;margin:0">📚 Base geral</h2><button class="sec" id="ag-gp">Abrir pasta</button></div>
+<p class="mut" style="margin:6px 0 0">Conhecimento comum (normas, políticas, POPs gerais), nas pastas <b>pop</b>, <b>manual</b>, <b>diretriz</b> e <b>outros</b>. Os agentes marcados com "usa a base geral" também consultam estes documentos.</p>
+<p class="mono" style="font-size:12px;margin:6px 0 0" id="ag-gc"></p></div>
+<div class="card"><div class="row"><h2 style="flex:1;margin:0">Agentes da empresa</h2><button class="pri" id="ag-novo">＋ Novo agente</button></div>
+<div id="ag-form" class="hide" style="margin-top:12px;padding:12px;border:1px solid var(--bd);border-radius:10px">
+<div class="grid2"><div><span class="lab">Nome do agente</span><input id="ag-n" style="width:100%" placeholder="Ex.: Comercial, Operações FTTH, RH"></div>
+<div><span class="lab">Ícone</span><input id="ag-i" style="width:70px;font-size:20px;text-align:center" maxlength="4" value="🤖"><span class="emo" id="ag-emo"></span></div></div>
+<span class="lab">Descrição (aparece para os usuários)</span><input id="ag-d" style="width:100%" placeholder="Ex.: Planos, preços, contratos e argumentos de venda">
+<span class="lab">Instruções para o agente (opcional)</span><textarea id="ag-ins" rows="4" style="width:100%" placeholder="Ex.: Responda como consultor comercial, sempre com o valor do plano e a fidelidade. Não fale de assuntos técnicos de rede."></textarea>
+<div class="cks"><label><input type="checkbox" id="ag-g"> Também consulta a base geral (pastas pop, manual, diretriz e outros da raiz)</label><label><input type="checkbox" id="ag-w" checked> Pode buscar na internet quando não achar nos documentos</label></div>
+<div class="row"><button class="pri" id="ag-s">Salvar agente</button><button class="sec" id="ag-c">Cancelar</button><span class="mut" id="ag-m"></span></div></div>
+<div id="ag-l" style="margin-top:8px"></div><p class="mut" id="ag-msg"></p></div>
+</main>
+<main id="users" class="hide">
+<div class="card"><div class="row"><h2 style="flex:1;margin:0">👥 Usuários</h2><span class="mut" id="uc"></span></div>
+<p class="mut" style="margin:6px 0 0">Os funcionários acessam pelo navegador (computador ou celular) com o login e a senha criados aqui. O limite de usuários ativos vem da licença.</p></div>
+<div class="card"><h2>📱 Acesso dos funcionários</h2><div id="rede"><p class="mut">Carregando...</p></div></div>
+<div class="card"><h2>🌐 Acesso pela internet (fora da empresa)</h2><div id="ext"><p class="mut">Carregando...</p></div></div>
+<div class="card"><h2>Novo usuário</h2>
+<div class="grid2"><div><span class="lab">Nome</span><input id="nu-n" style="width:100%"></div>
+<div><span class="lab">Login (ex.: joao.silva)</span><input id="nu-l" style="width:100%" autocapitalize="off"></div>
+<div><span class="lab">Senha inicial (mín. 6)</span><input id="nu-s" style="width:100%" type="text" autocomplete="off"></div>
+<div><span class="lab">Tipo</span><select id="nu-p" style="width:100%"><option value="usuario">Usuário (só consulta)</option><option value="admin">Administrador (gerencia usuários e documentos)</option></select></div></div>
+<span class="lab">Agentes que pode usar</span><div class="cks" id="nu-ag"></div>
+<div class="row" style="margin-top:12px"><button class="pri" id="nu-b">Cadastrar</button><span id="nu-m" class="mut"></span></div></div>
+<div class="card"><div class="tw"><table><thead><tr><th>Nome</th><th>Login</th><th>Tipo</th><th>Agentes</th><th>Situação</th><th>Último acesso</th><th></th></tr></thead><tbody id="ul"></tbody></table></div>
+<p id="um" class="mut"></p></div>
+</main>
+<main id="perfil" class="hide">
+<div class="card"><h2>👤 Meu perfil de comunicação</h2>
+<p class="mut" style="margin-top:0">O Ragquest aprende como você prefere receber as respostas (mais técnico, mais didático, mais direto...) e ajusta o jeito de falar. Só muda o <b>estilo</b>: as informações continuam vindo dos documentos.</p>
+<div class="row"><span class="mut">Estilo</span><select id="pe" style="flex:1;min-width:160px"></select></div>
+<p class="mut" id="ped" style="margin:6px 0 0"></p>
+<label class="row" style="margin-top:10px;cursor:pointer"><input type="checkbox" id="pa"> <span>Aprender automaticamente com minhas conversas</span></label>
+<p class="mut" id="pi" style="margin:6px 0 0"></p></div>
+<div class="card"><h2>Perfil (Markdown)</h2>
+<p class="mut" style="margin-top:0">Você pode editar à vontade. Ex.: "Prefiro respostas curtas", "Trabalho com OLTs Huawei".</p>
+<textarea id="pm" rows="12" style="width:100%;font-family:Consolas,monospace;font-size:13px"></textarea>
+<p id="pst" class="mut"></p>
+<div class="row"><button class="pri" id="ps">Salvar perfil</button><button class="sec" id="pz">Zerar perfil</button></div></div>
+<div class="card"><h2>🧠 O que o Ragquest lembra de você</h2>
+<p class="mut" style="margin-top:0">O Ragquest guarda suas conversas e anota o que você contou sobre si (nome, cargo, equipamentos, preferências) para se lembrar de você nas próximas vezes. Você pode corrigir ou apagar quando quiser.</p>
+<label class="row" style="cursor:pointer"><input type="checkbox" id="mm-on"> <span>Lembrar de mim entre conversas</span></label>
+<textarea id="mm-t" rows="6" style="width:100%;margin-top:8px" placeholder="Ainda não lembro de nada. Conte sobre você no chat (ex.: &quot;Meu nome é Ana, coordeno o NOC e trabalho com OLT Huawei&quot;)."></textarea>
+<p class="mut" id="mm-i" style="margin:6px 0"></p>
+<div class="row"><button class="pri" id="mm-s">Salvar</button><button class="sec" id="mm-z">Esquecer tudo</button><button class="sec" id="mm-c">Apagar minhas conversas</button></div>
+<p class="mut" id="mm-m"></p></div>
+<div class="card"><h2>🔑 Minha senha</h2>
+<div class="grid2"><div><span class="lab">Senha atual</span><input type="password" id="ms-a" style="width:100%" autocomplete="current-password"></div><div></div>
+<div><span class="lab">Nova senha (mín. 6)</span><input type="password" id="ms-n" style="width:100%" autocomplete="new-password"></div>
+<div><span class="lab">Confirmar nova senha</span><input type="password" id="ms-c" style="width:100%" autocomplete="new-password"></div></div>
+<div class="row" style="margin-top:12px"><button class="pri" id="ms-b">Alterar senha</button><span id="ms-m" class="mut"></span></div></div>
+<div class="card hide" id="me-app"><h2>📱 App</h2><p class="mut" style="margin:0 0 8px">Conectado ao servidor <b id="me-srv"></b></p><button class="sec" id="me-trocar">Trocar servidor</button></div>
+<div class="card"><div class="row"><span class="mut" style="flex:1" id="me-info"></span><button class="sec" id="sair">Sair</button></div></div>
+</main>
+<footer id="lic"></footer>
+
+<div id="prep" class="ov hide"><div class="card">
+<div class="row" style="margin-bottom:8px"><img class="logo" src="/icones/icone-192.png" alt=""><h2 style="margin:0">Preparando o Ragquest</h2></div>
+<p class="mut" style="margin-top:0">Só na primeira vez: baixando os modelos de inteligência artificial (cerca de 3 a 6 GB). Você pode continuar usando o computador; esta tela atualiza sozinha.</p>
+<p id="pp-txt" style="margin:12px 0 6px">Verificando...</p>
+<div style="height:12px;background:var(--bot);border-radius:6px;overflow:hidden"><div id="pp-bar" style="height:100%;width:0;background:linear-gradient(90deg,var(--pri),var(--pri2));transition:width .4s"></div></div>
+<p id="pp-det" class="mut" style="margin:6px 0 0"></p><p id="pp-err" class="err"></p>
+<button class="pri hide" id="pp-retry" style="width:100%">Tentar de novo</button></div></div>
+<div id="ativar" class="ov hide"><form class="card" id="af">
+<div class="row" style="margin-bottom:8px"><img class="logo" src="/icones/icone-192.png" alt=""><h2 style="margin:0">Ativar o Ragquest</h2></div>
+<p class="mut" id="amot"></p>
+<p style="margin:12px 0 0">1. Envie este <b>código da máquina</b> ao fornecedor:</p>
+<div class="code" id="mcode">----</div>
+<button type="button" class="sec" id="cpy" style="width:100%">Copiar código</button>
+<p style="margin:14px 0 6px">2. Cole a <b>chave de licença</b> recebida:</p>
+<textarea id="akey" rows="4" style="width:100%;resize:vertical" placeholder="RAGQUEST-..."></textarea>
+<p id="aerr" class="err"></p><button class="pri" style="width:100%">Ativar</button></form></div>
+
+<div id="setup" class="ov hide"><form class="card" id="sf">
+<div class="row" style="margin-bottom:8px"><img class="logo" src="/icones/icone-192.png" alt=""><h2 style="margin:0">Criar o administrador</h2></div>
+<p class="mut" style="margin-top:0">Primeiro acesso: crie a conta de quem vai administrar o Ragquest (cadastrar funcionários e documentos).</p>
+<label>Seu nome</label><input id="su-n" style="width:100%" autocomplete="name">
+<label>Login</label><input id="su-l" style="width:100%" autocapitalize="off" autocomplete="username" placeholder="ex.: admin">
+<label>Senha (mín. 6, sem espaços)</label><input id="su-s" type="password" style="width:100%" autocomplete="new-password">
+<label>Confirmar senha</label><input id="su-c" type="password" style="width:100%" autocomplete="new-password">
+<p id="su-e" class="err"></p><button class="pri" style="width:100%">Criar e entrar</button></form></div>
+<div id="semsetup" class="ov hide"><div class="card"><div class="row" style="margin-bottom:8px"><img class="logo" src="/icones/icone-192.png" alt=""><h2 style="margin:0">Ragquest ainda não configurado</h2></div>
+<p>O administrador precisa abrir o Ragquest <b>no servidor</b> e criar a conta de administrador. Depois disso, é só entrar com o login que ele cadastrar para você.</p></div></div>
+<div id="login" class="ov hide"><form class="card" id="lf">
+<div class="row" style="margin-bottom:8px"><img class="logo" src="/icones/icone-192.png" alt=""><h2 style="margin:0">Entrar no Ragquest</h2></div>
+<label>Login</label><input id="lg-l" style="width:100%" autocapitalize="off" autocomplete="username">
+<label>Senha</label><input id="lg-s" type="password" style="width:100%" autocomplete="current-password">
+<p class="err" id="lg-e"></p><button class="pri" style="width:100%">Entrar</button>
+<p class="mut" style="margin:10px 0 0">Esqueceu a senha? Peça ao administrador para redefinir.</p>
+<div id="lg-app" class="appbox hide"><b>📱 App Ragquest para Android</b><p class="mut" style="margin:4px 0 8px">Instale uma vez e abra direto pelo ícone, sem digitar o endereço.</p>
+<div class="row"><a class="btnl pri" id="lg-apk" href="/app/ragquest.apk">1. Baixar o app</a><a class="btnl sec" id="lg-abrir" href="#">2. Abrir no app</a></div>
+<p class="mut" style="margin:8px 0 0;font-size:12px">Ao instalar, o Android pode pedir para permitir apps desta fonte: toque em Configurações → Permitir.</p></div>
+<div id="lg-ios" class="appbox hide"><b>📱 No iPhone</b><p class="mut" style="margin:4px 0 0">Toque em <b>Compartilhar</b> (□↑) → <b>Adicionar à Tela de Início</b>. O Ragquest vira um ícone e abre como app.</p></div></form></div>
+<script>
+const $=id=>document.getElementById(id);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let TOKEN="";try{TOKEN=localStorage.getItem("ragquest_token")||""}catch{}
+// no app Android a sessão vale para o endereço interno e o externo (troca sozinho entre Wi-Fi e 4G)
+try{if(!TOKEN&&window.RagquestApp&&RagquestApp.sessao){TOKEN=RagquestApp.sessao()||"";if(TOKEN)localStorage.setItem("ragquest_token",TOKEN)}}catch{}
+let LIC=null,ME=null;
+function show(id,on){$(id).classList.toggle("hide",!on)}
+function salvarToken(t){TOKEN=t||"";try{t?localStorage.setItem("ragquest_token",t):localStorage.removeItem("ragquest_token")}catch{}
+ try{if(window.RagquestApp&&RagquestApp.guardarSessao)RagquestApp.guardarSessao(TOKEN)}catch{}}
+async function checkLic(){LIC=await (await fetch("/licenca")).json();
+ $("mcode").textContent=LIC.codigo_maquina;$("amot").textContent=LIC.motivo||"";
+ if(!LIC.valida){show("ativar",true);return false}
+ show("ativar",false);
+ $("lic").textContent=`Ragquest v${LIC.versao} · Licenciado para ${LIC.cliente||"-"}`+(LIC.validade?` · válida até ${LIC.validade.split("-").reverse().join("/")}`:"");
+ return true}
+async function checkAuth(){const s=await (await fetch("/auth/estado",{headers:{Authorization:"Bearer "+TOKEN}})).json();
+ if(s.precisa_setup){show(s.local?"setup":"semsetup",true);if(s.local)$("su-n").focus();return false}
+ if(!s.usuario){salvarToken("");show("login",true);$("lg-l").focus();return false}
+ entrou(s.usuario);return true}
+function entrou(u){ME=u;["login","setup","semsetup"].forEach(i=>show(i,false));
+ const adm=u.papel=="admin";show("t-docs",adm);show("t-users",adm);show("t-agentes",adm);
+ $("who").innerHTML="";const b=document.createElement("b");b.textContent=u.nome;$("who").append(b,document.createElement("br"),document.createTextNode(adm?"Administrador":"Usuário"));
+ if(!$("chat").dataset.h){$("chat").dataset.h=1;iniciarChat()}
+ $("q").focus()}
+$("cpy").onclick=async()=>{try{await navigator.clipboard.writeText(LIC.codigo_maquina);$("cpy").textContent="Copiado ✓"}catch{$("cpy").textContent="Selecione e copie o código acima"}};
+$("af").onsubmit=async e=>{e.preventDefault();$("aerr").textContent="";
+ const r=await fetch("/licenca",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+TOKEN},body:JSON.stringify({chave:$("akey").value})});
+ if(!r.ok){$("aerr").textContent=(await r.json()).detail||"Chave inválida";return}
+ if(await checkLic())checkAuth()};
+$("sf").onsubmit=async e=>{e.preventDefault();$("su-e").textContent="";
+ if($("su-s").value!==$("su-c").value){$("su-e").textContent="As senhas não conferem.";return}
+ const r=await fetch("/auth/setup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({nome:$("su-n").value,login:$("su-l").value,senha:$("su-s").value})});
+ const d=await r.json();if(!r.ok){$("su-e").textContent=d.detail;return}salvarToken(d.token);entrou(d.usuario)};
+$("lf").onsubmit=async e=>{e.preventDefault();$("lg-e").textContent="";
+ const r=await fetch("/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({login:$("lg-l").value,senha:$("lg-s").value})});
+ const d=await r.json();if(!r.ok){$("lg-e").textContent=d.detail;return}$("lg-s").value="";salvarToken(d.token);entrou(d.usuario)};
+async function api(path,opt={}){opt.headers={...(opt.headers||{}),Authorization:"Bearer "+TOKEN};
+ const r=await fetch(path,opt);
+ if(r.status==402){await checkLic();throw new Error("Ragquest não ativado")}
+ if(r.status==401||r.status==409){salvarToken("");await checkAuth();throw new Error("Faça login novamente")}
+ if(!r.ok){let m=r.statusText;try{m=(await r.json()).detail||m}catch{}throw new Error(m)}return r.json()}
+const TABS=["chat","docs","agentes","users","perfil"];
+function tab(n){TABS.forEach(t=>{show(t,t==n);$("t-"+t).classList.toggle("on",t==n)});show("ask",n=="chat");show("cbar",n=="chat");
+ if(n=="docs")load();if(n=="perfil")loadPerfil();if(n=="users"){loadUsers();loadRede();loadExterno()}if(n=="agentes")loadAgentes()}
+TABS.forEach(t=>$("t-"+t).onclick=()=>tab(t));
+function lat(s){s=s||"";for(let i=0;i<4;i++)s=s.replace(/\\[dt]?frac\{([^{}]*)\}\{([^{}]*)\}/g,"($1) ÷ ($2)").replace(/\\(?:text|mathrm|mathbf|textbf|operatorname)\{([^{}]*)\}/g,"$1");
+ const m={times:"×",cdot:"·",approx:"≈",div:"÷",geq:"≥",leq:"≤",ge:"≥",le:"≤",neq:"≠",Omega:"Ω",pm:"±",rightarrow:"→",to:"→",sqrt:"√",degree:"°",circ:"°"};
+ return s.replace(/\\[,;:! ]/g," ").replace(/\\%/g,"%").replace(/\\(left|right)/g,"").replace(/\\([a-zA-Z]+)/g,(x,c)=>m[c]??c)
+  .replace(/\(([^()÷]*)\)/g,(x,a)=>/^\s*[\d.,]+\s*$/.test(a)?a.trim():x).replace(/[{}]/g,"").replace(/[ \t]+/g," ").trim()}
+function semLatex(t){return (t||"").replace(/\\\[([\s\S]*?)\\\]|\$\$([\s\S]*?)\$\$/g,(x,a,b)=>"\n"+lat(a??b)+"\n").replace(/\\\(([\s\S]*?)\\\)/g,(x,a)=>lat(a))}
+function fmt(t){t=semLatex(t);const esc=s=>s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+ const blocos=[];t=(t||"").replace(/```[a-z]*\n?([\s\S]*?)(```|$)/g,(m,c)=>{blocos.push(c.replace(/\n$/,""));return "\u0000"+(blocos.length-1)+"\u0000"});
+ t=esc(t).replace(/`([^`\n]+)`/g,"<code>$1</code>").replace(/\*\*([^*\n]+)\*\*/g,"<b>$1</b>").replace(/^#{1,4}\s+(.+)$/gm,"<b>$1</b>")
+  .replace(/^(\s*)[-*]\s+/gm,"$1• ").replace(/\[(\d+(?:,\s*\d+)*)\]/g,'<sup class="cit">[$1]</sup>');
+ return t.replace(/\u0000(\d+)\u0000/g,(m,i)=>"<pre class=\"cod\">"+esc(blocos[+i])+"</pre>")}
+function add(txt,cls,src,origem){const d=document.createElement("div");d.className="msg "+cls;
+ if(origem=="web"||origem=="web_externa"){const b=document.createElement("div");b.className="badge";b.textContent=origem=="web"?"🌐 Resposta da internet (não estava nos documentos)":"🌐 Pesquisa na internet · não incorporada ao conhecimento do agente";d.appendChild(b)}
+ const corpo=document.createElement("div");if(cls.startsWith("bot"))corpo.innerHTML=fmt(txt);else corpo.textContent=txt;d.appendChild(corpo);
+ if(src&&src.length){const s=document.createElement("div");s.className="src";s.appendChild(document.createTextNode("Fontes: "));
+  src.forEach((x,i)=>{if(i)s.appendChild(document.createTextNode(" · "));
+   if(x.url){const a=document.createElement("a");a.href=x.url;a.target="_blank";a.rel="noopener";a.textContent=`[${x.n}] ${x.title||x.url}`;s.appendChild(a)}
+   else s.appendChild(document.createTextNode(`[${x.n}] ${x.title} (v${x.version}${x.page?", pág. "+x.page:""})`))});
+  d.appendChild(s)}
+ $("chat").appendChild(d);$("chat").scrollTop=1e9;return d}
+let CID=null,AGS=[],AG=null;
+const agAtual=()=>AGS.find(a=>a.slug==AG)||null;
+async function iniciarChat(){try{AGS=await api("/agentes")}catch{AGS=[]}
+ let guard=null;try{guard=localStorage.getItem("ragquest_agente")}catch{}
+ AG=(AGS.find(a=>a.slug==guard)||AGS[0]||{}).slug||null;mostrarAgente();novaConversa()}
+function mostrarAgente(){const a=agAtual();$("c-agnome").textContent=a?a.icone+" "+a.nome+(AGS.length>1?" ▾":""):"Sem agente";
+ $("c-ag").style.cursor=AGS.length>1?"pointer":"default";$("q").disabled=$("send").disabled=!a;
+ try{if(a)localStorage.setItem("ragquest_agente",a.slug)}catch{}}
+function trocarAgente(slug){if(slug==AG){fecharAgMenu();return}AG=slug;mostrarAgente();fecharAgMenu();novaConversa()}
+function fecharAgMenu(){show("agmenu",false);show("agfundo",false)}
+$("c-ag").onclick=()=>{if(AGS.length<2)return;const m=$("agmenu");m.innerHTML='<div class="gsec" style="margin:4px 8px 6px">Escolha o agente</div>';
+ AGS.forEach(a=>{const it=document.createElement("div");it.className="agit"+(a.slug==AG?" on":"");const ic=document.createElement("span");ic.className="ic";ic.textContent=a.icone;
+  const d=document.createElement("div");const b=document.createElement("b");b.textContent=a.nome;const s=document.createElement("small");s.textContent=a.descricao||"";d.append(b,s);it.append(ic,d);it.onclick=()=>trocarAgente(a.slug);m.appendChild(it)});
+ const r=$("c-ag").getBoundingClientRect();m.style.top=(r.bottom+6)+"px";show("agmenu",true);show("agfundo",true)};
+$("agfundo").onclick=fecharAgMenu;
+function novaConversa(){CID=null;$("chat").innerHTML="";$("c-titulo").textContent="Nova conversa";fecharGav();
+ const n=ME?ME.nome.split(" ")[0]:"",a=agAtual();
+ if(!a){add("Você ainda não tem acesso a nenhum agente. Peça ao administrador para liberar.","bot");return}
+ add(`Oi${n?", "+n:""}! Eu sou o ${a.icone} ${a.nome}`+(a.descricao?` (${a.descricao})`:"")+`. Pode conversar comigo normalmente ou me perguntar o que precisar.`,"bot");$("q").focus()}
+async function abrirConversa(id){fecharGav();try{const c=await api("/conversas/"+id);CID=id;if(c.agente&&AGS.some(a=>a.slug==c.agente)){AG=c.agente;mostrarAgente()}$("chat").innerHTML="";$("c-titulo").textContent=c.titulo;
+ c.mensagens.forEach(m=>{const d=add(m.conteudo,m.papel=="user"?"me":"bot",m.fontes,m.origem)});$("chat").scrollTop=1e9}catch(e){add("Erro: "+e.message,"bot")}}
+function fecharGav(){show("gav",false);show("gav-fundo",false)}
+function quando(s){const d=new Date(s.replace(" ","T"));const h=new Date();const dias=Math.floor((new Date(h.toDateString())-new Date(d.toDateString()))/864e5);
+ return dias==0?"Hoje":dias==1?"Ontem":dias<7?"Últimos 7 dias":dias<30?"Últimos 30 dias":"Mais antigas"}
+async function listarConversas(){const box=$("gav-l");box.innerHTML='<p class="mut">Carregando...</p>';
+ try{const l=await api("/conversas"+(AG?"?agente="+encodeURIComponent(AG):""));box.innerHTML="";if(!l.length){box.innerHTML='<p class="mut" style="margin:12px 8px">Nenhuma conversa ainda.</p>';return}
+  let grupo="";l.forEach(c=>{const g=quando(c.atualizada);if(g!=grupo){grupo=g;const s=document.createElement("div");s.className="gsec";s.textContent=g;box.appendChild(s)}
+   const it=document.createElement("div");it.className="ci"+(c.id==CID?" on":"");const t=document.createElement("span");t.className="t";t.textContent=c.titulo;t.title=c.titulo;
+   const x=document.createElement("button");x.className="sec";x.textContent="🗑";x.title="Apagar conversa";
+   x.onclick=async ev=>{ev.stopPropagation();if(!x.dataset.c){x.dataset.c=1;x.textContent="Apagar?";return}await api("/conversas/"+c.id,{method:"DELETE"});if(c.id==CID)novaConversa();listarConversas()};
+   it.append(t,x);it.onclick=()=>abrirConversa(c.id);box.appendChild(it)})}catch(e){box.textContent=e.message}}
+$("c-nova").onclick=$("gav-nova").onclick=novaConversa;
+$("c-lista").onclick=()=>{const a=agAtual();$("gav").querySelector("b").textContent="Conversas"+(a?" · "+a.icone+" "+a.nome:"");show("gav",true);show("gav-fundo",true);listarConversas()};
+$("gav-x").onclick=$("gav-fundo").onclick=fecharGav;
+$("ask").onsubmit=e=>{e.preventDefault();const q=$("q").value.trim();if(!q||$("send").disabled)return;$("q").value="";enviar(q)};
+async function enviar(q,web=false){
+ add(web?"🌐 Pesquisar na internet":q,"me");const w=add("Pensando...","bot status");$("send").disabled=true;let txt="",fim=null;
+ try{const r=await fetch("/chat",{method:"POST",headers:{"Content-Type":"application/json",Authorization:"Bearer "+TOKEN},body:JSON.stringify({question:q,tipo:$("tipo").value||null,conversa_id:CID,agente:AG,pesquisar_web:web})});
+  if(r.status==402){await checkLic();throw new Error("Ragquest não ativado")}
+  if(r.status==401||r.status==409){salvarToken("");await checkAuth();throw new Error("Faça login novamente")}
+  if(!r.ok){let m=r.statusText;try{m=(await r.json()).detail||m}catch{}throw new Error(m)}
+  const rd=r.body.getReader(),dec=new TextDecoder();let buf="";
+  while(true){const {value,done}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});let i;
+   while((i=buf.indexOf("\n"))>=0){const linha=buf.slice(0,i).trim();buf=buf.slice(i+1);if(!linha)continue;const ev=JSON.parse(linha);
+    if(ev.t=="inicio")CID=ev.conversa_id;
+    else if(ev.t=="status"&&!txt){w.textContent=ev.texto}
+    else if(ev.t=="delta"){if(!txt){w.className="msg bot vivo"}txt+=ev.texto;w.innerHTML=fmt(txt);$("chat").scrollTop=1e9}
+    else if(ev.t=="fim")fim=ev;
+    else if(ev.t=="erro")throw new Error(ev.texto)}}
+  if(fim){w.remove();const m=add(fim.resposta||txt,"bot",fim.fontes,fim.origem);if(fim.sugerir_indexar&&fim.fontes.length)sugerir(m,fim.fontes);
+   if(fim.oferecer_web){const bw=document.createElement("button");bw.className="sec";bw.style.marginTop="8px";bw.textContent="🌐 Pesquisar na internet";
+    bw.onclick=()=>{bw.remove();enviar(q,true)};m.appendChild(bw)}$("c-titulo").textContent=fim.titulo||"Conversa"}
+  else{w.className="msg bot";if(!txt)w.textContent="Sem resposta. Tente de novo."}}
+ catch(err){w.className="msg bot";w.textContent="Erro: "+err.message}$("send").disabled=false;$("q").focus()}
+function sugerir(m,src){const b=document.createElement("div");b.className="sug";
+ b.innerHTML='<b>📥 Adicionar estes sites ao conhecimento deste agente?</b><div class="mut">Nada é salvo sem a sua confirmação. Marque só fontes confiáveis.</div>';
+ const boxes=src.map(x=>{const l=document.createElement("label");const c=document.createElement("input");c.type="checkbox";c.value=x.url;c.dataset.t=x.title||x.url;
+  const s=document.createElement("span");s.textContent=(x.title||x.url)+" — "+x.url;l.append(c,s);b.appendChild(l);return c});
+ const r=document.createElement("div");r.className="row";const sel=document.createElement("select");["outros","manual","pop","diretriz"].forEach(t=>{const o=document.createElement("option");o.textContent=t;sel.appendChild(o)});
+ const ok=document.createElement("button");ok.className="pri";ok.type="button";ok.textContent="Adicionar selecionados";
+ const no=document.createElement("button");no.className="sec";no.type="button";no.textContent="Agora não";
+ const st=document.createElement("span");st.className="mut";r.append(sel,ok,no,st);b.appendChild(r);m.appendChild(b);$("chat").scrollTop=1e9;
+ no.onclick=()=>b.remove();
+ ok.onclick=async()=>{const sel_=boxes.filter(c=>c.checked);if(!sel_.length){st.textContent="Marque ao menos um site.";return}
+  ok.disabled=no.disabled=true;let okc=0,er=[];
+  for(const c of sel_){st.textContent="Indexando "+(okc+er.length+1)+"/"+sel_.length+"...";
+   try{await api("/crawl",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({url:c.value,tipo:sel.value,title:c.dataset.t,agente:AG})});okc++}catch(e){er.push(c.dataset.t)}}
+  b.innerHTML="";const f=document.createElement("div");f.className=er.length?"err":"ok";
+  f.textContent=(okc?`✓ ${okc} site(s) adicionado(s) à base. Eles serão atualizados automaticamente.`:"Nenhum site foi adicionado.")+(er.length?` Não foi possível ler: ${er.join(", ")}.`:"");b.appendChild(f)}}
+let SK=[];
+async function loadPerfil(){loadMemoria();$("pst").textContent="";$("me-info").textContent=ME?`Conectado como ${ME.nome} (${ME.login})`:"";
+ try{if(!SK.length)SK=await api("/skills");const p=await api("/perfil");
+  const s=$("pe");s.innerHTML="";const a=document.createElement("option");a.value="auto";a.textContent="Automático (aprende com você)";s.appendChild(a);
+  SK.forEach(k=>{const o=document.createElement("option");o.value=k.id;o.textContent=k.nome;s.appendChild(o)});s.value=p.estilo;descSk();
+  $("pa").checked=p.aprendizado;$("pm").value=p.md;$("pi").textContent=`${p.interacoes} interação(ões) registradas`}catch(e){$("pst").textContent=e.message}}
+function descSk(){const k=SK.find(x=>x.id==$("pe").value);$("ped").textContent=k?k.descricao:"O estilo é escolhido automaticamente a partir das suas conversas."}
+$("pe").onchange=descSk;
+$("ps").onclick=async()=>{try{await api("/perfil",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({estilo:$("pe").value,aprendizado:$("pa").checked,md:$("pm").value})});$("pst").textContent="✓ Perfil salvo."}catch(e){$("pst").textContent="Erro: "+e.message}};
+$("pz").onclick=async()=>{if(!$("pz").dataset.c){$("pz").dataset.c=1;$("pz").textContent="Confirmar?";return}delete $("pz").dataset.c;$("pz").textContent="Zerar perfil";
+ try{await api("/perfil",{method:"DELETE"});loadPerfil();$("pst").textContent="Perfil zerado."}catch(e){$("pst").textContent=e.message}};
+async function loadMemoria(){$("mm-m").textContent="";try{const m=await api("/memoria");$("mm-on").checked=m.ativa;$("mm-t").value=m.texto;
+ $("mm-i").textContent=`${m.conversas} conversa(s) salva(s) · ${m.resumos} lembrada(s) em resumo. Um fato por linha.`}catch(e){$("mm-i").textContent=e.message}}
+$("mm-s").onclick=async()=>{try{await api("/memoria",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({ativa:$("mm-on").checked,texto:$("mm-t").value})});$("mm-m").textContent="✓ Memória salva."}catch(e){$("mm-m").textContent=e.message}};
+$("mm-on").onchange=()=>$("mm-s").onclick();
+const confirma=(b,txt,fn)=>async()=>{if(!b.dataset.c){b.dataset.c=1;b.dataset.o=b.textContent;b.textContent=txt;return}delete b.dataset.c;b.textContent=b.dataset.o;await fn()};
+$("mm-z").onclick=confirma($("mm-z"),"Confirmar: esquecer tudo?",async()=>{await api("/memoria",{method:"DELETE"});await loadMemoria();$("mm-m").textContent="Pronto: esqueci o que sabia sobre você."});
+$("mm-c").onclick=confirma($("mm-c"),"Confirmar: apagar conversas?",async()=>{await api("/conversas",{method:"DELETE"});novaConversa();await loadMemoria();$("mm-m").textContent="Conversas apagadas."});
+async function loadSkills(){try{const d=await api("/conhecimento");const b=$("sk-l");b.innerHTML="";
+ $("sk-st").textContent=`${d.skills.filter(s=>s.skill).length} de ${d.skills.length} prontas`+(d.pendentes?` · ${d.pendentes} sendo escrita(s)`:"");
+ d.skills.forEach(s=>{const tr=b.insertRow();tr.insertCell().textContent=s.titulo;tr.insertCell().textContent=s.assunto||"-";tr.insertCell().textContent=s.skill?"✓ pronta":"⏳ na fila";
+  const c=tr.insertCell();c.style.whiteSpace="nowrap";
+  if(s.skill){const v=document.createElement("button");v.className="sec";v.textContent="Ver";v.style.marginRight="4px";
+   v.onclick=async()=>{const nx=tr.nextElementSibling;if(nx&&nx.dataset.sk){nx.remove();return}const md=(await api("/conhecimento/"+s.doc_id)).md;
+    const r2=b.insertRow(tr.rowIndex);r2.dataset.sk=1;const cc=r2.insertCell();cc.colSpan=4;const pr=document.createElement("pre");pr.className="skill";pr.textContent=md;cc.appendChild(pr)};c.appendChild(v)}
+  const g=document.createElement("button");g.className="sec";g.textContent="Refazer";g.onclick=async()=>{await api("/conhecimento/"+s.doc_id+"/gerar",{method:"POST"});g.textContent="Na fila ✓";setTimeout(loadSkills,4000)};c.appendChild(g)})}
+ catch(e){$("sk-st").textContent=e.message}}
+$("ms-b").onclick=async()=>{$("ms-m").textContent="";if($("ms-n").value!==$("ms-c").value){$("ms-m").textContent="A confirmação não confere.";return}
+ try{await api("/auth/senha",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({atual:$("ms-a").value,nova:$("ms-n").value})});
+  ["ms-a","ms-n","ms-c"].forEach(i=>$(i).value="");$("ms-m").textContent="✓ Senha alterada."}catch(e){$("ms-m").textContent=e.message}};
+$("sair").onclick=async()=>{try{await api("/auth/sair",{method:"POST"})}catch{}salvarToken("");location.reload()};
+async function loadRede(){const box=$("rede");let r;try{r=await api("/rede")}catch(e){box.textContent=e.message;return}
+ box.innerHTML="";const p=(t,c)=>{const e=document.createElement("p");if(c)e.className=c;e.textContent=t;box.appendChild(e);return e};
+ const btn=(t,cls,fn)=>{const b=document.createElement("button");b.className=cls;b.textContent=t;b.onclick=fn;return b};
+ const msg=document.createElement("span");msg.className="mut";
+ async function mudar(body,txt){msg.textContent=txt;try{const d=await api("/rede",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+   if(d.reiniciando){msg.textContent="Reiniciando o Ragquest...";await sleep(2500);for(let i=0;i<40;i++){try{if((await fetch("/licenca")).ok)break}catch{}await sleep(1000)}}
+   loadRede()}catch(e){msg.textContent=e.message}}
+ if(!r.ativo){p("Hoje o Ragquest só abre neste computador. Para os funcionários entrarem pelo computador ou celular, libere o acesso pela rede. Cada um entra com o próprio login e senha.");
+  if(r.local){const row=document.createElement("div");row.className="row";row.append(btn("Liberar acesso pela rede","pri",()=>mudar({ativo:true,iniciar_com_windows:true},"Aguardando a permissão do Windows (clique em \"Sim\")...")),msg);box.appendChild(row)}
+  else p("Para liberar, abra o Ragquest no servidor.","mut");return}
+ p("Os funcionários abrem um destes endereços no navegador. No celular, basta apontar a câmera para o QR code. Precisam estar na mesma rede (ou no Tailscale). No Android, a tela de login oferece o app Ragquest; no iPhone, \"Adicionar à Tela de Início\".","mut");
+ if(r.firewall===false){const a=p("⚠️ O firewall do Windows pode estar bloqueando o acesso.","aviso");if(r.local)a.append(" ",btn("Liberar no firewall","sec",()=>mudar({liberar_firewall:true},"Aguardando a permissão do Windows...")))}
+ if(!r.enderecos.length)p("Nenhuma rede encontrada neste computador.","aviso");
+ r.enderecos.forEach((e,i)=>{const d=document.createElement("div");d.className="end";const q=document.createElement("div");q.className="qr";
+  const info=document.createElement("div");info.style.flex="1";info.style.minWidth="200px";const c=document.createElement("code");c.textContent=e.url;
+  const t=document.createElement("div");t.className="mut";t.textContent=e.tipo;
+  const cp=btn("Copiar","sec",async()=>{try{await navigator.clipboard.writeText(e.url);cp.textContent="Copiado ✓"}catch{cp.textContent="Selecione e copie"}});cp.style.marginTop="6px";
+  info.append(c,t,cp);d.append(q,info);box.appendChild(d);
+  if(i<3)fetch("/rede/qr?url="+encodeURIComponent(e.url),{headers:{Authorization:"Bearer "+TOKEN}}).then(x=>x.ok?x.text():"").then(s=>q.innerHTML=s);else q.remove()});
+ if(r.local){const row=document.createElement("div");row.className="row";row.style.marginTop="10px";
+  if(r.windows){const l=document.createElement("label");l.className="row";l.style.cursor="pointer";const ck=document.createElement("input");ck.type="checkbox";ck.checked=!!r.inicia_com_windows;
+   ck.onchange=()=>mudar({iniciar_com_windows:ck.checked},"Salvando...");l.append(ck," Iniciar o Ragquest junto com o Windows (recomendado no servidor)");row.appendChild(l)}
+  row.append(btn("Desligar acesso pela rede","sec",()=>mudar({ativo:false},"Desligando...")),msg);box.appendChild(row)}}
+let EXT_T=null;
+async function loadExterno(){const box=$("ext");clearTimeout(EXT_T);let r;try{r=await api("/externo")}catch(e){box.textContent=e.message;return}
+ box.innerHTML="";const p=(t,c)=>{const e=document.createElement("p");if(c)e.className=c;e.textContent=t;box.appendChild(e);return e};
+ const btn=(t,cls,fn)=>{const b=document.createElement("button");b.className=cls;b.textContent=t;b.onclick=fn;return b};
+ const msg=document.createElement("span");msg.className="mut";
+ async function mudar(body,txt){msg.textContent=txt;try{await api("/externo",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});loadExterno()}catch(e){msg.textContent=e.message}}
+ if(!r.ativo){
+  p("Libera o Ragquest para os funcionários fora da empresa (4G, casa, viagem), com HTTPS e sem abrir portas no roteador. Funciona mesmo com CGNAT. Usa o Cloudflare Tunnel (gratuito). Todos continuam entrando com login e senha.");
+  if(!r.local){p("Para ligar, abra o Ragquest no servidor.","mut");return}
+  const f=document.createElement("div");f.innerHTML=`
+  <label class="row" style="cursor:pointer;align-items:flex-start;margin:8px 0"><input type="radio" name="tm" value="rapido" ${r.modo!="fixo"?"checked":""}><span><b>Endereço automático</b> (para testar)<br><span class="mut">Sem cadastro. Gera um endereço *.trycloudflare.com que <b>muda quando o Ragquest reinicia</b>.</span></span></label>
+  <label class="row" style="cursor:pointer;align-items:flex-start;margin:8px 0"><input type="radio" name="tm" value="fixo" ${r.modo=="fixo"?"checked":""}><span><b>Endereço fixo com o domínio da empresa</b> (recomendado)<br><span class="mut">Ex.: ragquest.suaempresa.com.br. Precisa de uma conta grátis na Cloudflare com o domínio cadastrado.</span></span></label>
+  <div id="tfx" style="margin:6px 0 0 26px">
+   <ol class="mut" style="margin:4px 0 8px;padding-left:18px;font-size:13px"><li>No painel da Cloudflare: <b>Zero Trust → Networks → Tunnels → Create a tunnel</b> (tipo Cloudflared), dê o nome "ragquest".</li>
+   <li>Copie o token mostrado no comando de instalação (pode colar o comando inteiro aqui).</li>
+   <li>Em <b>Public hostname</b>, escolha o endereço (ex.: ragquest.suaempresa.com.br) e o serviço <b>HTTP → localhost:8765</b>.</li></ol>
+   <span class="lab">Token do túnel</span><input id="ttk" style="width:100%" autocomplete="off" placeholder="${r.tem_token?"(token já salvo; cole outro para trocar)":"eyJhIjoi..."}">
+   <span class="lab">Endereço</span><input id="ten" style="width:100%" autocapitalize="off" placeholder="ragquest.suaempresa.com.br" value="${(r.endereco_fixo||"").replace(/"/g,"")}"></div>`;
+  box.appendChild(f);const fx=$("tfx");const sync=()=>fx.style.display=f.querySelector("input[name=tm]:checked").value=="fixo"?"":"none";
+  f.querySelectorAll("input[name=tm]").forEach(x=>x.onchange=sync);sync();
+  const row=document.createElement("div");row.className="row";row.style.marginTop="10px";
+  row.append(btn("Ligar acesso pela internet","pri",()=>{const modo=f.querySelector("input[name=tm]:checked").value;
+   mudar({ativo:true,modo,token:modo=="fixo"?$("ttk").value:null,endereco:modo=="fixo"?$("ten").value:null},"Ligando (na primeira vez baixa o conector da Cloudflare, ~50 MB)...")}),msg);
+  box.appendChild(row);if(r.erro)p("⚠️ "+r.erro,"aviso");return}
+ const pend=!r.conectado||!r.endereco;
+ if(r.baixando)p("⏳ Baixando o conector da Cloudflare (só na primeira vez)...");
+ else if(r.erro)p("⚠️ "+r.erro,"aviso");
+ else if(pend)p("⏳ Conectando à Cloudflare...");
+ if(r.endereco){const d=document.createElement("div");d.className="end";const q=document.createElement("div");q.className="qr";
+  const info=document.createElement("div");info.style.flex="1";info.style.minWidth="200px";const c=document.createElement("code");c.textContent=r.endereco;
+  const t=document.createElement("div");t.className="mut";t.textContent=(r.conectado?"✅ Ativo · ":"")+(r.modo=="fixo"?"Endereço fixo da empresa":"Endereço automático (muda ao reiniciar o Ragquest)");
+  const cp=btn("Copiar","sec",async()=>{try{await navigator.clipboard.writeText(r.endereco);cp.textContent="Copiado ✓"}catch{cp.textContent="Selecione e copie"}});cp.style.marginTop="6px";
+  info.append(c,t,cp);d.append(q,info);box.appendChild(d);
+  fetch("/rede/qr?url="+encodeURIComponent(r.endereco),{headers:{Authorization:"Bearer "+TOKEN}}).then(x=>x.ok?x.text():"").then(s=>q.innerHTML=s);
+  p("Funciona no 4G e em qualquer internet. O app Android guarda este endereço e o da rede interna e troca sozinho. Para mais proteção, dá para exigir também o e-mail da empresa pelo Cloudflare Access (grátis até 50 usuários).","mut")}
+ if(r.local){const row=document.createElement("div");row.className="row";row.style.marginTop="10px";
+  row.append(btn("Desligar acesso pela internet","sec",()=>mudar({ativo:false},"Desligando...")),msg);box.appendChild(row)}
+ if(pend||r.baixando)EXT_T=setTimeout(()=>{if(!$("users").classList.contains("hide"))loadExterno()},2500)}
+let AGADM=[],NUCK=[];
+function caixasAgentes(box,marcados){box.innerHTML="";return AGADM.map(a=>{const l=document.createElement("label");const c=document.createElement("input");c.type="checkbox";c.value=a.id;c.checked=marcados.includes(a.id);
+ l.append(c,document.createTextNode(a.icone+" "+a.nome));box.appendChild(l);return c})}
+async function carregarAgAdm(){try{AGADM=(await api("/agentes/admin")).agentes}catch{AGADM=[]}}
+const EMOJIS=["🤖","💼","🛠️","📡","🧾","👥","📞","🏗️","⚖️","💰","🚚","🧪","📚","🛡️"];let AGED=null;
+$("ag-emo").innerHTML="";EMOJIS.forEach(e=>{const b=document.createElement("button");b.type="button";b.className="sec";b.textContent=e;b.onclick=()=>$("ag-i").value=e;$("ag-emo").appendChild(b)});
+function formAgente(a){AGED=a||null;show("ag-form",true);$("ag-m").textContent="";$("ag-n").value=a?a.nome:"";$("ag-i").value=a?a.icone:"🤖";$("ag-d").value=a?a.descricao:"";
+ $("ag-ins").value=a?a.instrucoes:"";$("ag-g").checked=a?a.usa_geral:false;$("ag-w").checked=a?a.busca_web:true;$("ag-n").focus()}
+$("ag-novo").onclick=()=>formAgente(null);$("ag-c").onclick=()=>show("ag-form",false);
+$("ag-s").onclick=async()=>{$("ag-m").textContent="";const body={nome:$("ag-n").value,icone:$("ag-i").value,descricao:$("ag-d").value,instrucoes:$("ag-ins").value,usa_geral:$("ag-g").checked,busca_web:$("ag-w").checked};
+ try{if(AGED)await api("/agentes/"+AGED.id,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  else await api("/agentes",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  show("ag-form",false);$("ag-msg").textContent=AGED?"✓ Agente atualizado.":"✓ Agente criado. Coloque os documentos dele na pasta indicada e libere o acesso em Usuários.";await loadAgentes();iniciarChat()}catch(e){$("ag-m").textContent=e.message}};
+const abrirPasta=async id=>{try{const r=await api("/agentes/"+id+"/abrir",{method:"POST"});$("ag-msg").textContent="Pasta aberta: "+r.caminho}catch(e){$("ag-msg").textContent=e.message}};
+$("ag-gp").onclick=()=>abrirPasta(0);
+async function loadAgentes(){try{const d=await api("/agentes/admin");AGADM=d.agentes;
+ $("ag-lim").textContent=`${d.agentes.length} agente(s)`+(d.limite?` de ${d.limite} permitidos pela licença`:" · sem limite na licença");
+ $("ag-gc").textContent=`${d.geral.documentos} documento(s) · ${d.geral.caminho}`;
+ const box=$("ag-l");box.innerHTML="";
+ d.agentes.forEach(a=>{const c=document.createElement("div");c.className="agcard";const ic=document.createElement("div");ic.className="ic";ic.textContent=a.icone;
+  const inf=document.createElement("div");inf.className="info";const t=document.createElement("b");t.textContent=a.nome;const ds=document.createElement("div");ds.className="mut";ds.textContent=a.descricao||"(sem descrição)";
+  const ch=document.createElement("div");ch.className="chips";[`${a.documentos} documento(s)`,`${a.usuarios} usuário(s) com acesso`,a.usa_geral?"usa a base geral":"só a própria pasta",a.busca_web?"busca na internet":"sem internet"].forEach(x=>{const s=document.createElement("span");s.className="chip";s.textContent=x;ch.appendChild(s)});
+  const pa=document.createElement("div");pa.className="mono";pa.textContent=a.caminho;
+  const bts=document.createElement("div");bts.className="row";bts.style.marginTop="6px";
+  const mk=(txt,fn)=>{const b=document.createElement("button");b.className="sec";b.textContent=txt;b.onclick=fn;bts.appendChild(b);return b};
+  mk("Editar",()=>formAgente(a));mk("Abrir pasta",()=>abrirPasta(a.id));
+  const del=mk("Excluir",async()=>{if(!del.dataset.c){del.dataset.c=1;del.textContent="Confirmar? (arquivos ficam na pasta)";return}
+   try{const r=await api("/agentes/"+a.id,{method:"DELETE"});$("ag-msg").textContent=`✓ Agente excluído (${r.documentos_removidos} documento(s) saíram da base; os arquivos continuam na pasta).`;loadAgentes();iniciarChat()}catch(e){$("ag-msg").textContent=e.message}});
+  inf.append(t,ds,ch,pa,bts);c.append(ic,inf);box.appendChild(c)})}catch(e){$("ag-msg").textContent=e.message}}
+async function loadUsers(){$("um").textContent="";await carregarAgAdm();NUCK=caixasAgentes($("nu-ag"),AGADM.length?[AGADM[0].id]:[]);try{const d=await api("/usuarios");
+ $("uc").textContent=`${d.ativos} ativo(s)`+(d.limite?` de ${d.limite} permitidos pela licença`:" · sem limite na licença");
+ const b=$("ul");b.innerHTML="";
+ d.usuarios.forEach(u=>{const tr=b.insertRow();
+  tr.insertCell().textContent=u.nome;tr.insertCell().textContent=u.login;
+  const t=document.createElement("span");t.className="tag"+(u.papel=="admin"?" adm":"");t.textContent=u.papel=="admin"?"Administrador":"Usuário";tr.insertCell().appendChild(t);
+  tr.insertCell().textContent=u.papel=="admin"?"Todos":(u.agentes.map(i=>{const a=AGADM.find(x=>x.id==i);return a?a.icone+" "+a.nome:""}).filter(Boolean).join(", ")||"nenhum");
+  tr.insertCell().textContent=u.ativo?"Ativo":"Desativado";tr.insertCell().textContent=u.ultimo_acesso||"nunca";
+  const c=tr.insertCell();c.style.whiteSpace="nowrap";
+  const bt=(txt,fn)=>{const x=document.createElement("button");x.className="sec";x.style.marginRight="4px";x.textContent=txt;x.onclick=fn;c.appendChild(x);return x};
+  const acao=async(fn,msg)=>{try{await fn();await loadUsers();$("um").textContent=msg}catch(e){$("um").textContent=e.message}};
+  const put=body=>api("/usuarios/"+u.id,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  bt("Redefinir senha",()=>{const tr2=$("ul").insertRow(tr.rowIndex);const cc=tr2.insertCell();cc.colSpan=7;
+   const i=document.createElement("input");i.placeholder="Nova senha para "+u.nome;i.style.marginRight="6px";const ok=document.createElement("button");ok.className="pri";ok.textContent="Salvar";
+   ok.onclick=()=>acao(()=>put({senha:i.value}),"✓ Senha de "+u.nome+" redefinida.");cc.append(i,ok);i.focus()});
+  if(u.papel!="admin")bt("Agentes",()=>{const tr2=$("ul").insertRow(tr.rowIndex);const cc=tr2.insertCell();cc.colSpan=7;
+   const box=document.createElement("div");box.className="cks";const cks=caixasAgentes(box,u.agentes);const ok=document.createElement("button");ok.className="pri";ok.textContent="Salvar acesso";
+   ok.onclick=()=>acao(()=>put({agentes:cks.filter(c=>c.checked).map(c=>+c.value)}),"✓ Acesso de "+u.nome+" atualizado.");cc.append(box,ok)});
+  if(u.id!==ME.id){bt(u.ativo?"Desativar":"Ativar",()=>acao(()=>put({ativo:!u.ativo}),"✓ Situação atualizada."));
+   bt(u.papel=="admin"?"Tornar usuário":"Tornar admin",()=>acao(()=>put({papel:u.papel=="admin"?"usuario":"admin"}),"✓ Tipo atualizado."));
+   const del=bt("Excluir",()=>{if(!del.dataset.c){del.dataset.c=1;del.textContent="Confirmar?";return}acao(()=>api("/usuarios/"+u.id,{method:"DELETE"}),"✓ Usuário excluído.")})}})
+ }catch(e){$("um").textContent=e.message}}
+$("nu-b").onclick=async()=>{$("nu-m").textContent="";
+ try{await api("/usuarios",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({nome:$("nu-n").value,login:$("nu-l").value,senha:$("nu-s").value,papel:$("nu-p").value,agentes:NUCK.filter(c=>c.checked).map(c=>+c.value)})});
+  $("nu-m").textContent=`✓ ${$("nu-n").value} cadastrado. Envie a ele o endereço, o login e a senha inicial.`;["nu-n","nu-l","nu-s"].forEach(i=>$(i).value="");loadUsers()}catch(e){$("nu-m").textContent=e.message}};
+async function loadPasta(){try{const p=await api("/pasta");$("pc").textContent=p.caminho;
+ const e=Object.entries(p.erros||{});$("ps").textContent=(p.processando?"⏳ Lendo: "+p.processando+" · ":"")+"Última verificação: "+(p.ultima_varredura||"aguardando...")+(e.length?" · ⚠️ Não foi possível ler: "+e.map(([k,v])=>k+" ("+v+")").join("; "):"")}catch(e){}}
+setInterval(()=>{if(!$("docs").classList.contains("hide"))loadPasta()},5000);
+function nomeArea(s){if(s=="geral")return "📚 Base geral";const a=AGADM.find(x=>x.slug==s);return a?a.icone+" "+a.nome:s}
+async function load(){await carregarAgAdm();const fa=$("fa"),v=fa.value;fa.innerHTML="";[["geral","📚 Base geral"]].concat(AGADM.map(a=>[a.slug,a.icone+" "+a.nome])).forEach(([s,n])=>{const o=document.createElement("option");o.value=s;o.textContent=n;fa.appendChild(o)});if(v)fa.value=v;
+ loadPasta();loadSkills();try{const l=await api("/documents");const b=$("list");b.innerHTML="";
+ l.forEach(d=>{const tr=b.insertRow();[d.title,nomeArea(d.agente),d.tipo,d.origem||"-","v"+d.version].forEach(v=>tr.insertCell().textContent=v);
+  const x=document.createElement("button");x.className="sec";x.textContent="Excluir";
+  x.onclick=async()=>{if(!x.dataset.c){x.dataset.c=1;x.textContent="Confirmar?";return}await api("/documents/"+d.id,{method:"DELETE"});load()};
+  tr.insertCell().appendChild(x)});
+ $("st").textContent=l.length?l.length+" documento(s)":"Nenhum documento ainda. Coloque arquivos na pasta de conhecimento."}catch(e){$("st").textContent=e.message}}
+async function run(btn,fn){btn.disabled=true;$("st").textContent="Processando (pode demorar)...";
+ try{const r=await fn();$("st").textContent="Status: "+(r.status||"ok")+(r.version?" (v"+r.version+")":"");load()}catch(e){$("st").textContent="Erro: "+e.message}btn.disabled=false}
+$("fb").onclick=()=>run($("fb"),()=>{if(!$("f").files[0])throw new Error("Escolha um arquivo");const fd=new FormData();
+ fd.append("file",$("f").files[0]);fd.append("tipo",$("ft").value);fd.append("agente",$("fa").value);return api("/documents",{method:"POST",body:fd})});
+$("ub").onclick=()=>run($("ub"),()=>api("/crawl",{method:"POST",headers:{"Content-Type":"application/json"},
+ body:JSON.stringify({url:$("u").value,tipo:$("ut").value})}));
+$("vb").onclick=()=>run($("vb"),()=>api("/pasta/varrer",{method:"POST"}));
+$("rc").onclick=()=>run($("rc"),()=>api("/recrawl",{method:"POST"}));
+async function preparar(){let iniciou=false;
+ while(true){let s;try{s=await (await fetch("/preparo")).json()}catch{await new Promise(r=>setTimeout(r,2000));continue}
+  if(s.pronto){show("prep",false);return}
+  show("prep",true);$("pp-err").textContent="";show("pp-retry",false);
+  if(!s.ollama){$("pp-txt").textContent="Iniciando o motor de IA (Ollama)...";$("pp-det").textContent="Se demorar mais de 2 minutos, reinicie o computador e abra o Ragquest de novo.";}
+  else if(s.erro){$("pp-txt").textContent="Não foi possível baixar o modelo.";$("pp-err").textContent=s.erro+" — verifique a internet.";show("pp-retry",true);
+   await new Promise(r=>{$("pp-retry").onclick=()=>{fetch("/preparo/iniciar",{method:"POST"});r()}});continue}
+  else{if(!s.baixando&&!iniciou){iniciou=true;await fetch("/preparo/iniciar",{method:"POST"})}
+   const pct=s.total?Math.floor(100*s.completo/s.total):0;
+   const etapa=s.modelo?(s.modelo.startsWith("bge")?"Modelo de busca":"Modelo de respostas")+" ("+s.modelo+")":"Preparando";
+   $("pp-txt").textContent=`${etapa}: ${pct}%`;$("pp-bar").style.width=pct+"%";
+   $("pp-det").textContent=s.total?`${(s.completo/1e9).toFixed(2)} de ${(s.total/1e9).toFixed(2)} GB · faltam ${s.faltando.length} modelo(s)`:(s.fase||"");}
+  await new Promise(r=>setTimeout(r,1500))}}
+const NO_APP=!!window.RagquestApp, ANDROID=/Android/i.test(navigator.userAgent), IOS=/iPhone|iPad|iPod/i.test(navigator.userAgent);
+const STANDALONE=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+async function ofertaApp(){
+ if(NO_APP){show("me-app",true);$("me-srv").textContent=RagquestApp.servidor();$("me-trocar").onclick=()=>RagquestApp.trocarServidor();return}
+ if(IOS&&!STANDALONE)show("lg-ios",true);
+ if(ANDROID){try{const i=await (await fetch("/app/info")).json();if(i.android){show("lg-app",true);
+  $("lg-abrir").href="intent://conectar?servidor="+encodeURIComponent(location.origin+"/")+"#Intent;scheme=ragquest;package=com.ragquest.app;S.browser_fallback_url="+encodeURIComponent(location.origin+"/app/ragquest.apk")+";end"}}catch{}}}
+ofertaApp();
+preparar().then(()=>checkLic()).then(ok=>{if(ok)checkAuth()});
+</script></body></html>
