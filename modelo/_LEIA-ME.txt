@@ -1,0 +1,15 @@
+﻿PASTA DE CONHECIMENTO DO RAGQUEST
+
+Coloque aqui os arquivos que o Ragquest deve usar para responder.
+Formatos: PDF (com texto), Word (.docx), Excel (.xlsx), .txt e .md
+
+Subpastas (definem o tipo do documento):
+  pop       -> Procedimentos Operacionais Padrao
+  manual    -> Manuais
+  diretriz  -> Diretrizes e normas
+  outros    -> Qualquer outro documento
+
+- Arquivo novo ou alterado: o Ragquest le automaticamente em ate 30 segundos.
+- Arquivo apagado: sai da base automaticamente.
+- Arquivos excluidos pelo site vao para a pasta "_lixeira".
+- Arquivos que comecam com "_" ou "~$" sao ignorados.
