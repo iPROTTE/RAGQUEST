@@ -7,8 +7,8 @@ p{color:#6c6876;font-size:14px}code{color:#1d1b22;word-break:break-all}
 button{width:100%;margin-top:10px;font:inherit;font-weight:600;padding:13px;border-radius:10px;border:0;background:#16538f;color:#fff}.sec{background:#fff;color:#16538f;border:1px solid #dedbe5}
 </style></head><body><div class="card">
 <div class="top"><img src="logo.png" alt=""><h1>Sem conexão com o servidor</h1></div>
-<p>Não foi possível abrir <code id="s"></code></p>
-<p>Verifique se o celular está no <b>Wi-Fi da empresa</b> (ou no Tailscale) e se o servidor do Ragquest está ligado.</p>
+<p>Nenhum endereço do servidor respondeu:</p><p><code id="s"></code></p>
+<p>Verifique a internet do celular e se o servidor do Ragquest está ligado. Fora da empresa, o servidor precisa estar com o <b>acesso pela internet</b> ligado.</p>
 <button onclick="RagquestApp.tentar()">Tentar de novo</button>
 <button class="sec" onclick="RagquestApp.trocarServidor()">Trocar servidor</button>
-</div><script>document.getElementById("s").textContent=RagquestApp.servidor()</script></body></html>
+</div><script>let l=[];try{l=JSON.parse(RagquestApp.servidores())}catch(e){l=[RagquestApp.servidor()]}document.getElementById("s").innerText=l.join("\n")</script></body></html>
